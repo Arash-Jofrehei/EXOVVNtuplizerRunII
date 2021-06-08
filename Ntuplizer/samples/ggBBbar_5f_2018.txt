@@ -1,0 +1,1 @@
+/ggBBbar_5f_TuneCP5_5p02TeV_MG5_aMCatNLO_pythia8/HINPbPbAutumn18DR-NoPUlowPtPhotonReg_103X_upgrade2018_realistic_HI_LowPtPhotonReg_v2-v2/AODSIM

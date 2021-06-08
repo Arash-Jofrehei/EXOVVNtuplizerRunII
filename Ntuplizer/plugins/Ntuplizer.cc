@@ -6,6 +6,7 @@
 #include "../interface/GenParticlesNtuplizer.h"
 #include "../interface/VerticesNtuplizer.h"
 #include "../interface/BsTauTauNtuplizer.h"
+#include "../interface/twoPiBsTauTauNtuplizer.h"
 
 #include "DataFormats/PatCandidates/interface/TriggerObjectStandAlone.h"
 
@@ -18,6 +19,7 @@
 #include "DataFormats/MuonReco/interface/MuonFwd.h"
 #include "DataFormats/ParticleFlowCandidate/interface/PFCandidate.h"
 #include "DataFormats/ParticleFlowReco/interface/PFBlockElement.h"
+#include "DataFormats/HeavyIonEvent/interface/Centrality.h"
 
 // #include "DataFormats/METReco/interface/PFMET.h"
 
@@ -30,6 +32,7 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
   vtxToken_             	    (consumes<reco::VertexCollection>(iConfig.getParameter<edm::InputTag>("vertices"))),
   rhoToken_             	    (consumes<double>(iConfig.getParameter<edm::InputTag>("rho"))),
   packedpfcandidatesToken_    (consumes<std::vector<reco::PFCandidate>>(iConfig.getParameter<edm::InputTag>("packedpfcandidates"))), 
+  //TrackCollectionToken_       (consumes<std::vector<reco::TrackCollection>>(iConfig.getParameter<edm::InputTag>("pixelTracks"))), 
   svToken_                    (consumes<std::vector<reco::VertexCompositePtrCandidate>>(iConfig.getParameter<edm::InputTag>("SecondaryVertices"))), 
   puinfoToken_          	    (consumes<std::vector<PileupSummaryInfo> >(iConfig.getParameter<edm::InputTag>("PUInfo"))),
   geneventToken_        	    (consumes<GenEventInfoProduct>(iConfig.getParameter<edm::InputTag>("genEventInfo"))),     
@@ -37,8 +40,10 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
   genparticleToken_     	    (consumes<reco::GenParticleCollection>(iConfig.getParameter<edm::InputTag>("genparticles"))),
   gentauToken_     	          (consumes<std::vector<reco::GenJet>>(iConfig.getParameter<edm::InputTag>("gentaus"))),
   
-  muonToken_	      	        (consumes<reco::MuonCollection>(iConfig.getParameter<edm::InputTag>("muons"))),
+  muonToken_	      	        (consumes<std::vector<reco::Muon>>(iConfig.getParameter<edm::InputTag>("muons"))),
   CaloTowerCollection_        (consumes<edm::SortedCollection<CaloTower>>(edm::InputTag("towerMaker"))),
+  tok_centSrc_                (consumes<reco::Centrality>(iConfig.getParameter<edm::InputTag>("centralitySrc"))),
+  //tok_centSrc_                (consumes<reco::Centrality>(iConfig.getParameter<edm::InputTag>("hiCentrality"))),
   
   
   triggerToken_	      	    (consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("HLT"))),
@@ -61,6 +66,7 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
   runFlags["doPileUp"] = iConfig.getParameter<bool>("doPileUp");
   runFlags["doVertices"] = iConfig.getParameter<bool>("doVertices");
   runFlags["doBsTauTau"] = iConfig.getParameter<bool>("doBsTauTau");
+  runFlags["dotwoPiBsTauTau"] = iConfig.getParameter<bool>("dotwoPiBsTauTau");
   runFlags["doGenHist"] = iConfig.getParameter<bool>("doGenHist");
   runFlags["isTruth"] = iConfig.getParameter<bool>("isTruth");
   runFlags["verbose"] = iConfig.getParameter<bool>("verbose");
@@ -84,6 +90,8 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
   /* Histogram for cutflow */
 
   nBranches_->cutflow_perevt = fs->make<TH1F>("cutflow_perevt", "Per Event Ntuplizer Cutflow", 10, 0, 10);
+  nBranches_->tau_decays = fs->make<TH1F>("tau_decays", "tau decay modes", 12, 0, 12);
+  nBranches_->tau_pT = fs->make<TH1F>("tau_pT", "gen tau pT", 75, 0, 25);
   nBranches_->q2_nocut = fs->make<TH1F>("q2_nocut", "q2 before any cut", 40, 0, 15);
 
 //  if(runFlags["useHammer"]){
@@ -139,6 +147,23 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
     std::cout<<"\n\n --->GETTING INSIDE doBsTauTau<---\n\n"<<std::endl;
     nTuplizers_["BsTauTau"] = new BsTauTauNtuplizer( muonToken_   , 
 						     CaloTowerCollection_ ,
+                 tok_centSrc_,
+						     vtxToken_   , 
+						     packedpfcandidatesToken_,
+						     triggerToken_,
+						     genparticleToken_,
+						     gentauToken_,
+						     runFlags,
+						     runValues,
+						     runStrings,
+						     nBranches_ );
+  }
+  
+  if (runFlags["dotwoPiBsTauTau"]) {
+    std::cout<<"\n\n --->GETTING INSIDE dotwoPiBsTauTau<---\n\n"<<std::endl;
+    nTuplizers_["twoPiBsTauTau"] = new twoPiBsTauTauNtuplizer( muonToken_   , 
+						     CaloTowerCollection_ ,
+                 tok_centSrc_,
 						     vtxToken_   , 
 						     packedpfcandidatesToken_,
 						     triggerToken_,

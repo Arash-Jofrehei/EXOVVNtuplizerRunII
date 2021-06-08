@@ -190,7 +190,7 @@ void NtupleBranches::branch( std::map< std::string, bool >& runFlags ){
 
 
 
-  if (runFlags["doBsTauTau"]){
+  if (runFlags["doBsTauTau"] || runFlags["dotwoPiBsTauTau"]){
     tree_->Branch("IsBsTauTau", &IsBsTauTau );
 
     tree_->Branch("BsTauTau_calo_eta",       &BsTauTau_calo_eta       );
@@ -198,6 +198,8 @@ void NtupleBranches::branch( std::map< std::string, bool >& runFlags ){
     tree_->Branch("BsTauTau_calo_energy",    &BsTauTau_calo_energy    );
     tree_->Branch("BsTauTau_calo_energyHFp", &BsTauTau_calo_energyHFp );
     tree_->Branch("BsTauTau_calo_energyHFm", &BsTauTau_calo_energyHFm );
+    tree_->Branch("BsTauTau_calo_zdcSumPlus", &BsTauTau_calo_zdcSumPlus );
+    tree_->Branch("BsTauTau_calo_zdcSumMinus", &BsTauTau_calo_zdcSumMinus );
 
     tree_->Branch("BsTauTau_trackPFactivity_pt",  &BsTauTau_trackPFactivity_pt);
     tree_->Branch("BsTauTau_trackPFactivity_eta", &BsTauTau_trackPFactivity_eta);
@@ -259,6 +261,10 @@ void NtupleBranches::branch( std::map< std::string, bool >& runFlags ){
     tree_->Branch("BsTauTau_tau_pfidx1", &BsTauTau_tau_pfidx1);
     tree_->Branch("BsTauTau_tau_pfidx2", &BsTauTau_tau_pfidx2);
     tree_->Branch("BsTauTau_tau_pfidx3", &BsTauTau_tau_pfidx3);
+
+    tree_->Branch("reco_pion_pt", &reco_pion_pt );
+    tree_->Branch("reco_pion_eta", &reco_pion_eta );
+    tree_->Branch("reco_pion_phi", &reco_pion_phi );
 
     tree_->Branch("BsTauTau_tau_pi1_pt", &BsTauTau_tau_pi1_pt );
     tree_->Branch("BsTauTau_tau_pi1_eta", &BsTauTau_tau_pi1_eta );
@@ -324,12 +330,31 @@ void NtupleBranches::branch( std::map< std::string, bool >& runFlags ){
     tree_->Branch("BsTauTau_ngenmuons", &BsTauTau_ngenmuons);
     tree_->Branch("BsTauTau_isgen3", &BsTauTau_isgen3);
     tree_->Branch("BsTauTau_isgen3matched", &BsTauTau_isgen3matched);
+    tree_->Branch("BsTauTau_tau_rEff", &BsTauTau_tau_rEff);
+    tree_->Branch("BsTauTau_tau_rEff_error", &BsTauTau_tau_rEff_error);
+    tree_->Branch("BsTauTau_nPions", &BsTauTau_nPions);
     tree_->Branch("BsTauTau_nch", &BsTauTau_nch);
     tree_->Branch("BsTauTau_nch_qr", &BsTauTau_nch_qr);
     tree_->Branch("BsTauTau_ngentau3", &BsTauTau_ngentau3); 
     tree_->Branch("BsTauTau_ngentau", &BsTauTau_ngentau);
     tree_->Branch("BsTauTau_gentaupt", &BsTauTau_gentaupt);
     tree_->Branch("BsTauTau_gentaudm", &BsTauTau_gentaudm);
+    
+    tree_->Branch("PVz",&PVz);
+    tree_->Branch("pion_z",&pion_z);
+    tree_->Branch("matched_pion_deltaPt",&matched_pion_deltaPt);
+    
+    tree_->Branch("triggered",&triggered);
+    tree_->Branch("gen_tau_pt",&gen_tau_pt);
+    tree_->Branch("gen_tau_eta",&gen_tau_eta);
+    tree_->Branch("gen_tau_phi",&gen_tau_phi);
+    tree_->Branch("gen_tau_daughter_pdgId",&gen_tau_daughter_pdgId);
+    tree_->Branch("gen_tau_daughter_pt",&gen_tau_daughter_pt);
+    tree_->Branch("gen_tau_daughter_eta",&gen_tau_daughter_eta);
+    tree_->Branch("gen_tau_daughter_phi",&gen_tau_daughter_phi);
+    tree_->Branch("gen_tau_to_mu",&gen_tau_to_mu);
+    tree_->Branch("gen_tau_to_3prong",&gen_tau_to_3prong);
+    tree_->Branch("gen_tautau_to_mu3prong",&gen_tautau_to_mu3prong);
 
   }
 
@@ -498,6 +523,8 @@ void NtupleBranches::reset( void ){
   BsTauTau_calo_energy.clear();   
   BsTauTau_calo_energyHFp.clear();
   BsTauTau_calo_energyHFm.clear();
+  BsTauTau_calo_zdcSumPlus.clear();
+  BsTauTau_calo_zdcSumMinus.clear();
 
   BsTauTau_trackPFactivity_pt.clear();
   BsTauTau_trackPFactivity_eta.clear();
@@ -555,6 +582,10 @@ void NtupleBranches::reset( void ){
   BsTauTau_tau_pfidx1.clear();
   BsTauTau_tau_pfidx2.clear();
   BsTauTau_tau_pfidx3.clear();
+  
+  reco_pion_pt.clear();
+  reco_pion_eta.clear();
+  reco_pion_phi.clear();
 
   BsTauTau_tau_pi1_pt.clear();
   BsTauTau_tau_pi1_eta.clear();
@@ -619,12 +650,31 @@ void NtupleBranches::reset( void ){
 
   BsTauTau_isgen3.clear();
   BsTauTau_isgen3matched.clear();
+  BsTauTau_tau_rEff.clear();
+  BsTauTau_tau_rEff_error.clear();
+  BsTauTau_nPions.clear();
   BsTauTau_nch.clear();
   BsTauTau_nch_qr.clear();
   BsTauTau_ngentau3.clear();
   BsTauTau_ngentau.clear();
   BsTauTau_gentaupt.clear();
   BsTauTau_gentaudm.clear();
+  
+  PVz.clear();
+  pion_z.clear();
+  matched_pion_deltaPt.clear();
+  
+  triggered.clear();
+  gen_tau_pt.clear();
+  gen_tau_eta.clear();
+  gen_tau_phi.clear();
+  gen_tau_daughter_pdgId.clear();
+  gen_tau_daughter_pt.clear();
+  gen_tau_daughter_eta.clear();
+  gen_tau_daughter_phi.clear();
+  gen_tau_to_mu.clear();
+  gen_tau_to_3prong.clear();
+  gen_tautau_to_mu3prong.clear();
 
 
 
@@ -636,9 +686,13 @@ void NtupleBranches::reset( void ){
 } 
 
 void NtupleBranches::LabelHistograms( std::map< std::string, bool >& runFlags ){
-  std::vector bins_string = {"Precut", "Trigger","#tau #mu", "#tau hadron", "---","#tau  presence"};
-  for(size_t i=0; i< bins_string.size(); i++){
-    cutflow_perevt->GetXaxis()->SetBinLabel(i+1, bins_string[i]);
+  std::vector cutflow_bins_string = {"Precut", "Trigger","#tau #mu", "#tau hadron", "---","gen #mu","gen 3prong #tau","gen #mu-3prong event"};
+  for(size_t i=0; i< cutflow_bins_string.size(); i++){
+    cutflow_perevt->GetXaxis()->SetBinLabel(i+1, cutflow_bins_string[i]);
+  }
+  std::vector tau_decay_bins_string = {"number of #tau", "#mu", "e", "#pi^{#pm}", "#pi^{#pm} + #pi^{0}", "#pi^{#pm} + multiple #pi^{0}s", "3 prong inclusive", "a1", "#rho^{#pm}", "W^{#pm}", "#gamma", "The rest"};
+  for(size_t i=0; i< tau_decay_bins_string.size(); i++){
+    tau_decays->GetXaxis()->SetBinLabel(i+1, tau_decay_bins_string[i]);
   }
 
 

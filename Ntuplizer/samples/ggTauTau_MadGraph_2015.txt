@@ -1,0 +1,1 @@
+/ggTauTau_TuneCUEP_5p02TeV_MG5_aMCatNLO_pythia8-pLHE/ajofrehe-ggTauTau_TuneCUEP_5p02TeV_MG5_aMCatNLO_pythia8-AODSIM-v2-eef725472e9d7138234fbfd165e44059/USER

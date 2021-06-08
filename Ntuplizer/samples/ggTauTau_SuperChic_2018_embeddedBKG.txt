@@ -1,0 +1,1 @@
+/ggTauTau_TuneCP5_5p02TeV_HydjetDrumMB_SuperChic_pythia8/gkrintir-ggTauTau_TuneCP5_5p02TeV_HydjetDrumMB_SuperChic_pythia8-AODSIM-v1-ab88f6a9dde6b509a1fe1e1c1ef68448/USER

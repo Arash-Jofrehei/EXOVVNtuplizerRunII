@@ -15,6 +15,7 @@
 ////#include "DataFormats/PatCandidates/interface/Jet.h"
 //#include "DataFormats/PatCandidates/interface/PackedCandidate.h"
 //#include "DataFormats/Candidate/interface/Candidate.h"
+#include "DataFormats/HeavyIonEvent/interface/Centrality.h"
 //
 //#include "JetMETCorrections/Modules/interface/JetResolution.h"
 ////#include <CondFormats/JetMETObjects/interface/JetResolutionObject.h>
@@ -129,8 +130,10 @@ class BsTauTauNtuplizer : public CandidateNtuplizer {
  public:
   BsTauTauNtuplizer( edm::EDGetTokenT<reco::MuonCollection>    muonToken   , 
 		     edm::EDGetTokenT<edm::SortedCollection<CaloTower>> CaloTowerCollection ,
+         edm::EDGetTokenT<reco::Centrality> tok_centSrc,
 		     edm::EDGetTokenT<reco::VertexCollection> verticeToken, 
 		     edm::EDGetTokenT<std::vector<reco::PFCandidate>> packedpfcandidatesToken,
+		     //edm::EDGetTokenT<std::vector<reco::TrackCollection>> TrackCollectionToken,
 		     edm::EDGetTokenT<edm::TriggerResults> triggertoken,
 		     edm::EDGetTokenT<reco::GenParticleCollection> genptoken, 
 		     edm::EDGetTokenT<std::vector<reco::GenJet>> genttoken,
@@ -170,16 +173,20 @@ class BsTauTauNtuplizer : public CandidateNtuplizer {
 private:
    edm::EDGetTokenT<reco::MuonCollection>    muonToken_   ;
    edm::EDGetTokenT<edm::SortedCollection<CaloTower>> CaloTowerCollection_;
+   edm::EDGetTokenT<reco::Centrality> tok_centSrc_;
    edm::EDGetTokenT<reco::VertexCollection> verticeToken_   ;
    edm::EDGetTokenT<std::vector<reco::PFCandidate>>   		packedpfcandidatesToken_;
+   //edm::EDGetTokenT<std::vector<reco::TrackCollection>>   		TrackCollectionToken_;
    edm::EDGetTokenT<edm::TriggerResults> 		     HLTtriggersToken_;
    edm::EDGetTokenT<reco::GenParticleCollection> genParticlesToken_;
    edm::EDGetTokenT<std::vector<reco::GenJet>> genTauToken_;
 
+   edm::Handle<reco::Centrality> cent;
    edm::Handle<std::vector<reco::Muon>>      		       muons_		       ;
    edm::Handle< reco::VertexCollection >  vertices_;
    edm::Handle< reco::BeamSpot >  beamspot_;
    edm::Handle< std::vector<reco::PFCandidate> > packedpfcandidates_   ;
+   //edm::Handle< std::vector<reco::TrackCollection> > TrackCollection_   ;
    edm::Handle< edm::TriggerResults> 			     HLTtriggers_;
    edm::Handle< reco::GenParticleCollection >  genParticles_;
    edm::Handle< std::vector<reco::GenJet> >  genTaus_;

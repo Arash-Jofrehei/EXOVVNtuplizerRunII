@@ -1,0 +1,1 @@
+/ggTauTau_TuneCUEP_5p02TeV_MG5_aMCatNLO_pythia8-pLHE-v3/gkrintir-ggTauTau_TuneCUEP_5p02TeV_MG5_aMCatNLO_pythia8-AODSIM-v3-46131d3ab4af6b2debb44734258c535d/USER

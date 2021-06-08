@@ -14,6 +14,30 @@ process = cms.Process("Ntuple")
 process.load("Configuration.StandardSequences.MagneticField_cff")
 process.load('Configuration.Geometry.GeometryRecoDB_cff')
 
+
+
+# Add PbPb centrality
+process.load("RecoHI.HiCentralityAlgos.CentralityBin_cfi")
+process.load('RecoHI.HiCentralityAlgos.HiCentrality_cfi')
+process.hiCentrality.produceHFhits = False
+process.hiCentrality.produceHFtowers = False
+process.hiCentrality.produceEcalhits = False
+process.hiCentrality.produceZDChits = True
+process.hiCentrality.produceETmidRapidity = False
+process.hiCentrality.producePixelhits = False
+process.hiCentrality.produceTracks = False
+process.hiCentrality.producePixelTracks = False
+process.hiCentrality.reUseCentrality = True
+process.hiCentrality.srcZDChits = cms.InputTag("QWzdcreco")
+process.hiCentrality.srcReUse = cms.InputTag("hiCentrality","","reRECO")
+process.centralityBin.Centrality = cms.InputTag("hiCentrality")
+process.centralityBin.centralityVariable = cms.string("HFtowers")
+process.centralityBin.nonDefaultGlauberModel = cms.string("")
+process.cent_seq = cms.Sequence(process.hiCentrality * process.centralityBin)
+
+
+
+
 process.TFileService = cms.Service("TFileService",
                                     fileName = cms.string('flatTuple.root')
 #                                    fileName = cms.string('flatTuple_mc.root')
@@ -52,176 +76,29 @@ options.register( 'runUpToEarlyF',
 
 
 #options.maxEvents = 2000
-options.maxEvents = -1
+options.maxEvents = 10000
 
 #2015 data file
 options.inputFiles = [
+  'root://cms-xrd-global.cern.ch//store/hidata/HIRun2018A/HIForward/AOD/04Apr2019-v1/00000/19CFC2EF-7F8F-194C-92D9-01E0F59802AD.root' # 2018 data
+#  '/store/hidata/HIRun2018A/HIForward/AOD/04Apr2019-v1/00000/00DB29C1-E3F8-6546-BB32-120BFD2C7FEA.root' # 2018 data
+#  'file:/work/ajofrehe/gtau/AOD/CMSSW_10_3_2/src/EXOVVNtuplizerRunII/Ntuplizer/HIN-HINPbPbWinter16DR-00315.root'
+#  '/store/user/ajofrehe/gtau_v01/ggTauTau_TuneCUEP_5p02TeV_MG5_aMCatNLO_pythia8-pLHE/ggTauTau_TuneCUEP_5p02TeV_MG5_aMCatNLO_pythia8-AODSIM-v2/210316_105241/0000/HIN-HINPbPbWinter16DR-00315_1.root'
+#  '/store/user/ajofrehe/gtau_v01/ggTauTau_TuneCUEP_5p02TeV_MG5_aMCatNLO_pythia8-pLHE/ggTauTau_TuneCUEP_5p02TeV_MG5_aMCatNLO_pythia8-AODSIM-v2/210316_105241/0000/HIN-HINPbPbWinter16DR-00315_10.root' # 2015 Signal
+#  '/store/himc/HINPbPbWinter16DR/ggBBbar_4f_TuneCUETP8M1_5p02TeV_MG5_aMCatNLO_pythia8/AODSIM/NoPU_75X_mcRun2_HeavyIon_v14_ext1-v2/280000/00359902-EF3E-EB11-BA40-FA163ED5170D.root' #2015 BBbar
+#  '/store/himc/HINPbPbWinter16DR/ggCCbar_TuneCUETP8M1_5p02TeV_MG5_aMCatNLO_pythia8/AODSIM/NoPU_75X_mcRun2_HeavyIon_v14_ext1-v3/40000/00FA85F6-4673-EB11-8D21-842B2B6890DE.root' #2015 CCbar
+#  '/store/himc/HINPbPbWinter16DR/ggCCbar_TuneCUETP8M1_5p02TeV_MG5_aMCatNLO_pythia8/AODSIM/NoPU_75X_mcRun2_HeavyIon_v14_ext1-v3/40000/F6AD22F8-7173-EB11-89BE-BC97E17B3080.root' #2015 CCbar
+#  '/store/user/gkrintir/ggTauTau_TuneCUEP_5p02TeV_MG5_aMCatNLO_pythia8-pLHE/ggTauTau_TuneCUEP_5p02TeV_MG5_aMCatNLO_pythia8-AODSIM-v2/210319_031327/0000/HIN-HINPbPbWinter16DR-00315_10.root'
+#  '/store/himc/HINPbPbAutumn18DR/ggTauTau_TuneCP5_5p02TeV_SuperChic_pythia8/AODSIM/NoPUlowPtPhotonReg_LbyL_103X_upgrade2018_realistic_HI_LowPtPhotonReg_v2-v2/10000/05D69AFE-D2D0-6647-803A-E2F4FA2D87F1.root' #SuperChic Signal 2018
+#  '/store/hidata/HIRun2015/HIForward/AOD/02May2016-v1/50000/5C634C6F-1019-E611-BCBF-D4AE528FF351.root'
+#  '/store/himc/HINPbPbWinter16DR/ggBBbar_4f_TuneCUETP8M1_5p02TeV_MG5_aMCatNLO_pythia8/AODSIM/NoPU_75X_mcRun2_HeavyIon_v14_ext1-v2/280000/00359902-EF3E-EB11-BA40-FA163ED5170D.root'
+#  '/store/group/phys_heavyions/rchudasa/ggtautu/GammaGammaTauTau_PbPb_2015_MC/ggTauTau_TuneCP5_5p02TeV_amcatnlo_pythia8_pLHE/ggTauTau_TuneCP5_5p02TeV_amcatnlo_pythia8_RECO/201018_084927/0000/ggtautau_reco_1.root'
+#  '/store/himc/HINPbPbAutumn18DR/ggTauTau_TuneCP5_5p02TeV_SuperChic_pythia8/AODSIM/NoPUlowPtPhotonReg_LbyL_103X_upgrade2018_realistic_HI_LowPtPhotonReg_v2-v2/10000/05D69AFE-D2D0-6647-803A-E2F4FA2D87F1.root'
+#  '/store/group/phys_heavyions/rchudasa/ggtautu/GammaGammaTauTau_PbPb_2015_MC/ggTauTau_TuneCP5_5p02TeV_amcatnlo_pythia8_pLHE/ggTauTau_TuneCP5_5p02TeV_amcatnlo_pythia8_RECO/201018_084927/0000/ggtautau_reco_10.root'
 #  '/store/himc/HINPbPbWinter16DR/ggBBbar_4f_TuneCUETP8M1_5p02TeV_MG5_aMCatNLO_pythia8/AODSIM/NoPU_75X_mcRun2_HeavyIon_v14-v1/20000/2A31F974-711E-EB11-92FB-20040FEABE68.root',
-  'file:/scratch/ytakahas/2A31F974-711E-EB11-92FB-20040FEABE68.root'
+#  'file:/scratch/ytakahas/2A31F974-711E-EB11-92FB-20040FEABE68.root'
 #  '/store/hidata/HIRun2015/HIForward/AOD/02May2016-v1/00000/0038049F-0D25-E611-B57F-F01FAFD691F4.root'
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_274.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_275.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_276.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_277.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_278.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_279.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_28.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_280.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_281.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_282.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_283.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_284.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_285.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_286.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_287.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_288.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_289.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_29.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_290.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_291.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_292.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_293.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_294.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_295.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_296.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_297.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_298.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_299.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_30.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_300.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_301.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_302.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_303.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_304.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_305.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_306.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_307.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_308.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_309.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_31.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_310.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_311.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_312.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_313.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_314.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_315.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_316.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_317.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_318.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_319.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_32.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_320.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_321.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_322.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_323.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_324.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_325.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_326.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_327.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_328.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_329.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_33.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_330.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_331.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_332.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_333.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_334.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_335.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_336.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_337.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_338.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_339.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_34.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_340.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_341.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_342.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_348.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_349.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_35.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_36.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_37.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_38.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_387.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_388.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_39.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_40.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_41.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_411.root',
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_42.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_43.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_44.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_45.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_46.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_47.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_48.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_49.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_50.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_51.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_52.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_53.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_54.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_55.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_56.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_57.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_58.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_59.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_6.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_60.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_61.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_62.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_63.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_64.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_65.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_66.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_67.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_68.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_69.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_7.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_70.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_71.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_72.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_73.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_74.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_75.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_76.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_77.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_78.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_79.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_8.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_80.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_81.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_82.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_83.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_84.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_85.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_86.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_87.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_88.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_89.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_9.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_90.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_91.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_92.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_93.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_94.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_95.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_96.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_97.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_98.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1_v2/200825_234941/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_99.root', 
-#
-
-
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1/200818_040700/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_1.root', 
-#                      '/store/user/gkrintir/HIForward/HIForward_HIRun2015-02May2016-v1/200818_040700/0000/HIForward_HIRun2015-02May2016-v1_MiniAOD_99.root'
-                  ]
-    
-
-
-#options.inputFiles = ['file:/work/sleontsi/gtau_ntuples/signalMC/HIN-HINPbPbAutumn18DR-00170MiniAOD_1.root',
-#                      'file:/work/sleontsi/gtau_ntuples/signalMC/HIN-HINPbPbAutumn18DR-00170MiniAOD_2.root',
-#                      'file:/work/sleontsi/gtau_ntuples/signalMC/HIN-HINPbPbAutumn18DR-00170MiniAOD_3.root']
-
+]
 
 options.parseArguments()
 
@@ -471,6 +348,7 @@ process.ntuplizer = cms.EDAnalyzer("Ntuplizer",
     doGenEvent	      = cms.bool(config["DOGENEVENT"]),
     doPileUp	      = cms.bool(config["DOPILEUP"]),
     doBsTauTau	      = cms.bool(config["DOBSTAUTAU"]),
+    dotwoPiBsTauTau	      = cms.bool(config["DOtwoPiBSTAUTAU"]),
     isTruth           = cms.bool(config["ISTRUTH"]),
     doVertices	      = cms.bool(config["DOVERTICES"]),
     doMissingEt       = cms.bool(config["DOMISSINGET"]),
@@ -486,6 +364,7 @@ process.ntuplizer = cms.EDAnalyzer("Ntuplizer",
     muons = cms.InputTag("muons"),
     electrons = cms.InputTag("slimmedElectrons"),
     ebRecHits = cms.InputTag("reducedEgamma","reducedEBRecHits"),
+    centralitySrc = cms.InputTag("hiCentrality"),
 
 #    eleHEEPId51Map = cms.InputTag("egmGsfElectronIDs:heepElectronID-HEEPV51"),
 #    eleHEEPIdMap = cms.InputTag("egmGsfElectronIDs:heepElectronID-HEEPV60"),
@@ -616,6 +495,7 @@ if config["RUNONMC"]:
 
   process.ntuplizer.vertices = cms.InputTag("hiSelectedVertex")
   process.ntuplizer.packedpfcandidates = cms.InputTag('particleFlowTmp')
+  process.ntuplizer.genparticles = cms.InputTag("genParticles")
 
 process.p += process.ntuplizer
 process.p.associate(pattask)

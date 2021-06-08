@@ -9,6 +9,7 @@
 //#include "DataFormats/PatCandidates/interface/Jet.h"
 #include "DataFormats/PatCandidates/interface/PackedCandidate.h"
 #include "DataFormats/Candidate/interface/Candidate.h"
+#include "DataFormats/HeavyIonEvent/interface/Centrality.h"
 
 #include "JetMETCorrections/Modules/interface/JetResolution.h"
 //#include <CondFormats/JetMETObjects/interface/JetResolutionObject.h>

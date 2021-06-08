@@ -1,0 +1,1 @@
+/ggCCbar_TuneCUETP8M1_5p02TeV_MG5_aMCatNLO_pythia8/HINPbPbWinter16DR-NoPU_75X_mcRun2_HeavyIon_v14-v1/AODSIM

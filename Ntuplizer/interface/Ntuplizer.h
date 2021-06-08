@@ -14,6 +14,7 @@
 #include "SimDataFormats/JetMatching/interface/JetFlavour.h"
 #include "DataFormats/PatCandidates/interface/TriggerObjectStandAlone.h"
 #include "DataFormats/PatCandidates/interface/PackedTriggerPrescales.h"
+#include "DataFormats/HeavyIonEvent/interface/Centrality.h"
 #include "../interface/NtupleBranches.h"
 
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
@@ -22,6 +23,10 @@
 #include "SimDataFormats/GeneratorProducts/interface/LHEEventProduct.h"
 #include "SimDataFormats/GeneratorProducts/interface/LHERunInfoProduct.h"
 #include "GeneratorInterface/LHEInterface/interface/LHEEvent.h"
+
+#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
+#include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
+
 class NtupleBranches;
 class CandidateNtuplizer;
 
@@ -58,6 +63,7 @@ private:
   edm::EDGetTokenT<reco::VertexCollection>                  vtxToken_           ;
   edm::EDGetTokenT<double>                                  rhoToken_           ;
   edm::EDGetTokenT<std::vector<reco::PFCandidate>>          packedpfcandidatesToken_;
+  //edm::EDGetTokenT<std::vector<reco::TrackCollection>>          TrackCollectionToken_;
   edm::EDGetTokenT<std::vector<reco::VertexCompositePtrCandidate>>          svToken_;
 
   edm::EDGetTokenT< std::vector<PileupSummaryInfo> >        puinfoToken_        ;
@@ -69,6 +75,7 @@ private:
  
   edm::EDGetTokenT<reco::MuonCollection>     		        muonToken_  	;	
   edm::EDGetTokenT<edm::SortedCollection<CaloTower>>    CaloTowerCollection_;
+  edm::EDGetTokenT<reco::Centrality>                    tok_centSrc_;
   //  edm::EDGetTokenT<edm::View<pat::Electron> >		    electronToken_	;
   /* edm::EDGetTokenT<edm::ValueMap<bool> >                    eleVetoIdMapToken_  ; */
   /* edm::EDGetTokenT<edm::ValueMap<bool> >                    eleLooseIdMapToken_ ; */

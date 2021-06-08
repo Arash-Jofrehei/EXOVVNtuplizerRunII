@@ -23,6 +23,7 @@
 #include "RecoEgamma/EgammaTools/interface/ConversionFinder.h"
 #include "DataFormats/MuonReco/interface/MuonFwd.h"
 #include "DataFormats/MuonReco/interface/MuonCocktails.h"
+#include "DataFormats/HeavyIonEvent/interface/Centrality.h"
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 #include "FWCore/Framework/interface/Event.h"
@@ -50,6 +51,8 @@ public:
   /* output histogram */
   /* Cutflow */
   TH1F* cutflow_perevt ;
+  TH1F* tau_decays;
+  TH1F* tau_pT;
   TH1F* q2_nocut;
 //  TH1F* hammer_width;
   
@@ -221,6 +224,8 @@ public:
   std::vector <double>              BsTauTau_calo_energy;
   std::vector <double>              BsTauTau_calo_energyHFp;
   std::vector <double>              BsTauTau_calo_energyHFm;
+  std::vector <double>              BsTauTau_calo_zdcSumPlus;
+  std::vector <double>              BsTauTau_calo_zdcSumMinus;
 
   std::vector <double>              BsTauTau_trackPFactivity_pt;
   std::vector <double>              BsTauTau_trackPFactivity_eta;
@@ -285,6 +290,10 @@ public:
   std::vector<int>       BsTauTau_tau_pfidx2;
   std::vector<int>       BsTauTau_tau_pfidx3;
 
+
+  std::vector<float>       reco_pion_pt;
+  std::vector<float>       reco_pion_eta;
+  std::vector<float>       reco_pion_phi;
 
   std::vector<float>       BsTauTau_tau_pi1_pt;
   std::vector<float>       BsTauTau_tau_pi1_eta;
@@ -354,12 +363,31 @@ public:
   std::vector<int  >                BsTauTau_ngenmuons      ;
   std::vector<int  >                BsTauTau_isgen3;
   std::vector<int  >                BsTauTau_isgen3matched;
+  std::vector<float> BsTauTau_tau_rEff;
+  std::vector<float> BsTauTau_tau_rEff_error;
+  std::vector<int> BsTauTau_nPions;
   std::vector<int> BsTauTau_nch;
   std::vector<int> BsTauTau_nch_qr;
   std::vector<int> BsTauTau_ngentau3;
   std::vector<int> BsTauTau_ngentau;
   std::vector<float> BsTauTau_gentaupt;
   std::vector<int> BsTauTau_gentaudm;
+  
+  std::vector<float> PVz;
+  std::vector<float> pion_z;
+  std::vector<float> matched_pion_deltaPt;
+  
+  std::vector<bool> triggered;
+  std::vector<float> gen_tau_pt;
+  std::vector<float> gen_tau_eta;
+  std::vector<float> gen_tau_phi;
+  std::vector<int> gen_tau_daughter_pdgId;
+  std::vector<float> gen_tau_daughter_pt;
+  std::vector<float> gen_tau_daughter_eta;
+  std::vector<float> gen_tau_daughter_phi;
+  std::vector<bool> gen_tau_to_mu;
+  std::vector<bool> gen_tau_to_3prong;
+  std::vector<bool> gen_tautau_to_mu3prong;
 
 
 
