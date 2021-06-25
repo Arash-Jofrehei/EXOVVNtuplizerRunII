@@ -15,29 +15,6 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 process.load('Configuration.Geometry.GeometryRecoDB_cff')
 
 
-
-# Add PbPb centrality
-process.load("RecoHI.HiCentralityAlgos.CentralityBin_cfi")
-process.load('RecoHI.HiCentralityAlgos.HiCentrality_cfi')
-process.hiCentrality.produceHFhits = False
-process.hiCentrality.produceHFtowers = False
-process.hiCentrality.produceEcalhits = False
-process.hiCentrality.produceZDChits = True
-process.hiCentrality.produceETmidRapidity = False
-process.hiCentrality.producePixelhits = False
-process.hiCentrality.produceTracks = False
-process.hiCentrality.producePixelTracks = False
-process.hiCentrality.reUseCentrality = True
-process.hiCentrality.srcZDChits = cms.InputTag("QWzdcreco")
-process.hiCentrality.srcReUse = cms.InputTag("hiCentrality","","reRECO")
-process.centralityBin.Centrality = cms.InputTag("hiCentrality")
-process.centralityBin.centralityVariable = cms.string("HFtowers")
-process.centralityBin.nonDefaultGlauberModel = cms.string("")
-process.cent_seq = cms.Sequence(process.hiCentrality * process.centralityBin)
-
-
-
-
 process.TFileService = cms.Service("TFileService",
                                     fileName = cms.string('flatTuple.root')
 #                                    fileName = cms.string('flatTuple_mc.root')
@@ -309,6 +286,7 @@ else : #Data
    jecAK4chsUncFile = "JEC/%s_DATA_Uncertainty_AK4PFchs.txt"%(JECprefix)
  
 #   GT = '106X_dataRun2_v27' 
+#   GT = '103X_dataRun2_v6' 
    print "jec JEC_runDependent_suffix %s ,  prefix %s " %(JEC_runDependent_suffix,JECprefix)
 
 print "jec prefix ", JECprefix
@@ -320,6 +298,110 @@ print GT
 print "****************************************************************************************************" 
 process.GlobalTag = GlobalTag(process.GlobalTag, GT)
 
+
+# Set the global tag
+process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
+process.GlobalTag.globaltag = cms.string('103X_dataRun2_v6')
+
+
+# Add PbPb event plane
+process.load("RecoHI.HiEvtPlaneAlgos.HiEvtPlane_cfi")
+process.load("RecoHI.HiEvtPlaneAlgos.hiEvtPlaneFlat_cfi")
+process.hiEvtPlane.trackTag = cms.InputTag("generalTracks")
+process.hiEvtPlane.vertexTag = cms.InputTag("offlinePrimaryVerticesRecovery")
+process.hiEvtPlane.loadDB = cms.bool(True)
+process.hiEvtPlane.useNtrk = cms.untracked.bool(False)
+process.hiEvtPlane.caloCentRef = cms.double(-1)
+process.hiEvtPlane.caloCentRefWidth = cms.double(-1)
+process.hiEvtPlaneFlat.caloCentRef = cms.double(-1)
+process.hiEvtPlaneFlat.caloCentRefWidth = cms.double(-1)
+process.hiEvtPlaneFlat.vertexTag = cms.InputTag("offlinePrimaryVerticesRecovery")
+process.hiEvtPlaneFlat.useNtrk = cms.untracked.bool(False)
+#process.CondDB.connect = "sqlite_file:HeavyIonRPRcd_PbPb2018_offline.db"
+#process.PoolDBESSource = cms.ESSource("PoolDBESSource",
+#                                       process.CondDB,
+#                                       toGet = cms.VPSet(cms.PSet(record = cms.string('HeavyIonRPRcd'),
+#                                                                  tag = cms.string('HeavyIonRPRcd_PbPb2018_offline')
+#                                                                  )
+#                                                         )
+#                                      )
+#process.es_prefer_flatparms = cms.ESPrefer('PoolDBESSource','')
+process.evtplane_seq = cms.Sequence(process.hiEvtPlane * process.hiEvtPlaneFlat)
+
+# Add trigger selection
+import HLTrigger.HLTfilters.hltHighLevel_cfi
+process.hltFilter = HLTrigger.HLTfilters.hltHighLevel_cfi.hltHighLevel.clone()
+process.hltFilter.andOr = cms.bool(True)
+process.hltFilter.throw = cms.bool(False)
+process.hltFilter.HLTPaths = [
+    # Double muon triggers
+#    'HLT_HIL1DoubleMuOpen_OS_Centrality_40_100_v*', # Peripheral OS dimuons
+#    'HLT_HIL1DoubleMuOpen_Centrality_50_100_v*', # Peripheral dimuons
+#    'HLT_HIL3Mu2p5NHitQ10_L2Mu2_M7toinf_v*', # Bottomonia
+#    'HLT_HIL1DoubleMu10_v*', # Z bosons
+#    'HLT_HIUPC_DoubleMu0_NotMBHF2AND_v*', # UPC dimuons
+    # Single muon triggers
+#    'HLT_HIL1MuOpen_Centrality_80_100_v*', # Peripheral muons
+#    'HLT_HIL3Mu12_v*', # Electroweak bosons
+    'HLT_HIUPC_SingleMuOpen_NotMBHF2AND_v*', # UPC muons
+#    'HLT_HIL3Mu3_NHitQ10_v*',  # Low pT muons
+    # MinimumBias 
+#    'HLT_HIZeroBias_v*', # ZeroBias trigger
+    # EmptyBX
+#    'HLT_HIL1NotBptxOR_v*' # Empty BX trigger
+    ]
+    
+
+# Add PbPb collision event selection
+process.load('VertexCompositeAnalysis.VertexCompositeProducer.collisionEventSelection_cff')
+process.load('VertexCompositeAnalysis.VertexCompositeProducer.clusterCompatibilityFilter_cfi')
+process.load('VertexCompositeAnalysis.VertexCompositeProducer.hfCoincFilter_cff')
+process.load("VertexCompositeAnalysis.VertexCompositeProducer.OfflinePrimaryVerticesRecovery_cfi")
+process.colEvtSel = cms.Sequence(process.hfCoincFilter2Th4 * process.primaryVertexFilter * process.clusterCompatibilityFilter)
+
+# Define the event selection sequence
+process.eventFilter_HM = cms.Sequence(
+    process.hltFilter *
+    process.offlinePrimaryVerticesRecovery
+)
+process.eventFilter_HM_step = cms.Path( process.eventFilter_HM )
+# Add PbPb centrality
+
+# ZDC info
+process.load('VertexCompositeAnalysis.VertexCompositeProducer.QWZDC2018Producer_cfi')
+process.load('VertexCompositeAnalysis.VertexCompositeProducer.QWZDC2018RecHit_cfi')
+
+process.load("VertexCompositeAnalysis.VertexCompositeAnalyzer.eventinfotree_cff")
+process.eventinfoana.selectEvents = cms.untracked.string("eventFilter_HM_step")
+
+process.load("RecoHI.HiCentralityAlgos.CentralityBin_cfi")
+process.load('RecoHI.HiCentralityAlgos.HiCentrality_cfi')
+process.hiCentrality.produceHFhits = False
+process.hiCentrality.produceHFtowers = False
+process.hiCentrality.produceEcalhits = False
+process.hiCentrality.produceZDChits = True
+process.hiCentrality.produceETmidRapidity = False
+process.hiCentrality.producePixelhits = False
+process.hiCentrality.produceTracks = False
+process.hiCentrality.producePixelTracks = False
+process.hiCentrality.reUseCentrality = True
+process.hiCentrality.srcZDChits = cms.InputTag("QWzdcreco")
+process.hiCentrality.srcReUse = cms.InputTag("hiCentrality","","reRECO")
+process.centralityBin.Centrality = cms.InputTag("hiCentrality")
+process.centralityBin.centralityVariable = cms.string("HFtowers")
+process.centralityBin.nonDefaultGlauberModel = cms.string("")
+process.GlobalTag.toGet.extend([
+    cms.PSet(record = cms.string("HeavyIonRcd"),
+        tag = cms.string("CentralityTable_HFtowers200_DataPbPb_periHYDJETshape_run2v1033p1x01_offline"),
+        connect = cms.string("frontier://FrontierProd/CMS_CONDITIONS"),
+        label = cms.untracked.string("HFtowers")
+        ),
+    ])
+process.cent_seq = cms.Sequence(process.hiCentrality * process.centralityBin)
+
+
+# Define the analysis steps
+process.pcentandep_step = cms.Path(process.eventFilter_HM * process.zdcdigi * process.QWzdcreco * process.cent_seq * process.evtplane_seq)
 
 
 
